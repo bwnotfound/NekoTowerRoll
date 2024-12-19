@@ -13,6 +13,7 @@ class Config:
     min_extra_legend_round_num: int = 8
     valid_legend_round_num: int = 26
     total_monster_num: int = 494
+    mute_audio: bool = True
 
     def __post_init__(self):
         if ":" not in self.save_dir:

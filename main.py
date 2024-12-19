@@ -5,6 +5,7 @@ import math
 
 from selenium import webdriver
 from selenium.webdriver.edge.webdriver import WebDriver
+from selenium.webdriver.common.by import By
 from tqdm import tqdm
 
 from config import Config
@@ -14,6 +15,8 @@ def start_browser():
     # start browser
     if config.browser_type == "chrome":
         options = webdriver.ChromeOptions()
+        if config.mute_audio:
+            options.add_argument("--mute-audio")
         options.add_argument(
             '--unsafely-disable-devtools-self-xss-warnings'
         )  # 禁用站点隔离功能
@@ -26,6 +29,8 @@ def start_browser():
         browser = webdriver.Chrome(options=options)
     elif config.browser_type == "edge":
         options = webdriver.EdgeOptions()
+        if config.mute_audio:
+            options.add_argument("--mute-audio")
         options.add_argument('--unsafely-disable-devtools-self-xss-warnings')
         prefs = {
             'profile.default_content_settings.popups': 0,
@@ -107,7 +112,7 @@ def get_legend_rounds():
     all_rounds = browser.execute_script('return core.getFlag("randomBuffs", 0);')
     legend_rounds = []
     for i, p in enumerate(all_rounds):
-        if p < 2:
+        if p < 1:
             legend_rounds.append(i + 1)
     legend_rounds = [x for x in legend_rounds if x < config.total_monster_num]
     return legend_rounds
@@ -168,9 +173,18 @@ if __name__ == "__main__":
     browser: WebDriver = start_browser()
     browser.get(config.url)
     browser.implicitly_wait(30)
-    # wait for js file load.
-    time.sleep(5)
     # start game
+    while True:
+        try:
+            # 查找 id="playGame" 的 span 元素
+            element = browser.find_element(By.ID, 'playGame')
+
+            # 判断元素是否可见
+            if element.is_displayed():
+                break
+        except:
+            time.sleep(0.3)
+            continue
     browser.execute_script('main.dom.playGame.click()')
     time.sleep(1)
     t_bar = tqdm()
