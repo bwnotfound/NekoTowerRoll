@@ -10,7 +10,7 @@ class Config:
     browser_type: str = "edge"  # ["chrome", "edge"]
     save_dir: str = "save"
     min_double_money_num: int = 10
-    min_extra_legend_round_num: int = 8
+    min_extra_legend_round_num: int = 6
     valid_legend_round_num: int = 26
     total_monster_num: int = 494
     mute_audio: bool = True
